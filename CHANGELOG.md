@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Fixed: AI check, import and photo transcription failed with "The model's response did not match the expected format" when the AI model (often a local one) didn't follow the expected JSON layout. This mostly affected Ollama cloud models, which ignore the requested format. The instructions now spell out the exact layout, a retry tells the model what it got wrong, and slightly different field names (such as "line" instead of "text") are accepted. Icon descriptions and icon checks get the same layout instructions, and an icon check reply in the wrong layout no longer counts as a pass.
+
 ## 1.1.1 (2026-11-14)
 
 - The keep-screen-on button is labelled, remembered on each device, and turns itself back on when you return to the app. Over plain HTTP it explains that browsers need HTTPS for it.

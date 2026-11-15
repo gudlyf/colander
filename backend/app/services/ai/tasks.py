@@ -5,12 +5,12 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, model_validator
 
 from ...schemas import IngredientIn, NoteIn, RecipeIn, StepIn
 from ..settings_store import AIConfig
 from ..tags import normalize_tag
-from .providers import AIError, AIFormatError, ImageInput, get_provider
+from .providers import AIError, AIFormatError, ImageInput, get_provider, with_schema
 
 log = logging.getLogger(__name__)
 
@@ -49,9 +49,28 @@ RECIPE_SCHEMA = _obj(
 TAGS_SCHEMA = _obj({"tags": {"type": "array", "items": _STR}})
 
 
+# Keys local models sometimes use for a line's text instead of "text".
+_TEXT_ALIASES = ("line", "content", "value", "ingredient", "step", "instruction", "item")
+
+
 class _Line(BaseModel):
     section: str = ""
     text: str
+
+    @model_validator(mode="before")
+    @classmethod
+    def _lenient(cls, data: Any) -> Any:
+        # Not every provider enforces the schema strictly, so accept a bare string or a
+        # near-miss key name instead of failing the whole response.
+        if isinstance(data, str):
+            return {"section": "", "text": data}
+        if isinstance(data, dict) and "text" not in data:
+            for key in _TEXT_ALIASES:
+                if isinstance(data.get(key), str):
+                    return {"section": data.get("section") or "", "text": data[key]}
+        if isinstance(data, dict) and data.get("section") is None:
+            return {**data, "section": ""}
+        return data
 
 
 class _Extracted(BaseModel):
@@ -127,15 +146,32 @@ def _call(
     images: list[ImageInput] | None = None,
 ):
     provider = get_provider(cfg)
+    system = with_schema(system, schema)
+    prompt = user
     last_err: Exception | None = None
     for attempt in range(2):
         try:
-            data = provider.complete_json(system, user, schema, name, images=images)
+            data = provider.complete_json(system, prompt, schema, name, images=images)
             return model_cls.model_validate(data)
         except (ValidationError, AIFormatError) as e:
             last_err = e
             log.warning("AI response invalid (attempt %d): %s", attempt + 1, e)
+            prompt = (
+                f"{user}\n\nYour previous reply did not match the required format "
+                f"({_format_problem(e)}). Reply again with a JSON object that uses exactly "
+                "the keys and nesting in the schema."
+            )
     raise AIError(f"The model's response did not match the expected format: {last_err}")
+
+
+def _format_problem(e: Exception) -> str:
+    if isinstance(e, ValidationError):
+        probs = []
+        for err in e.errors()[:3]:
+            where = ".".join(str(p) for p in err["loc"]) or "top level"
+            probs.append(f"{where}: {err['msg'].lower()}")
+        return "; ".join(probs)
+    return str(e)[:200]
 
 
 def _to_recipe(result: _Extracted, *, hint_title: str | None, source_url: str | None) -> RecipeIn:

@@ -74,3 +74,47 @@ def test_dropping_text_rejected(fake_ai):
     res = check_recipe(CFG, RAW, [])
     assert not res.changed_lines
     assert "not applied" in res.recipe.notes[-1].text
+
+
+def test_near_miss_line_keys_accepted(fake_ai):
+    # Some local models ignore the schema and say "line" instead of "text", or send strings.
+    fake_ai.review = lambda u: {
+        "ingredients": [
+            {"section": "", "line": "2 cups broth"},
+            "1 tsp salt USE SOY SAUCE INSTEAD",
+        ],
+        "steps": [{"section": None, "line": "Heat it."}],
+        "issues": [],
+        "tags": [],
+    }
+    res = check_recipe(CFG, RAW, [])
+    assert res.changed_lines
+    assert [i.text for i in res.recipe.ingredients] == [
+        "2 cups broth",
+        "1 tsp salt USE SOY SAUCE INSTEAD",
+    ]
+    assert res.recipe.steps[0].text == "Heat it."
+
+
+def test_wrong_shape_is_retried_with_the_problem_named(fake_ai):
+    replies = iter(
+        [
+            {"sections": [{"section": "", "items": ["2 cups broth"]}], "issues": []},
+            {
+                "ingredients": [
+                    {"section": "", "text": "2 cups broth"},
+                    {"section": "", "text": "1 tsp salt USE SOY SAUCE INSTEAD"},
+                ],
+                "steps": [{"section": "", "text": "Heat it."}],
+                "issues": [],
+                "tags": [],
+            },
+        ]
+    )
+    fake_ai.review = lambda u: next(replies)
+    res = check_recipe(CFG, RAW, [])
+    assert res.recipe.ingredients[0].text == "2 cups broth"
+    first, second = [c for c in fake_ai if c["name"] == "review"]
+    assert '"ingredients"' in first["system"]  # the schema is spelled out
+    assert "did not match" not in first["user"]
+    assert "ingredients: field required" in second["user"]
