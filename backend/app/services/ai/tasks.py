@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, model_validator
 
 from ...schemas import IngredientIn, NoteIn, RecipeIn, StepIn
 from ..settings_store import AIConfig
@@ -49,9 +49,28 @@ RECIPE_SCHEMA = _obj(
 TAGS_SCHEMA = _obj({"tags": {"type": "array", "items": _STR}})
 
 
+# Keys local models sometimes use for a line's text instead of "text".
+_TEXT_ALIASES = ("line", "content", "value", "ingredient", "step", "instruction", "item")
+
+
 class _Line(BaseModel):
     section: str = ""
     text: str
+
+    @model_validator(mode="before")
+    @classmethod
+    def _lenient(cls, data: Any) -> Any:
+        # Not every provider enforces the schema strictly, so accept a bare string or a
+        # near-miss key name instead of failing the whole response.
+        if isinstance(data, str):
+            return {"section": "", "text": data}
+        if isinstance(data, dict) and "text" not in data:
+            for key in _TEXT_ALIASES:
+                if isinstance(data.get(key), str):
+                    return {"section": data.get("section") or "", "text": data[key]}
+        if isinstance(data, dict) and data.get("section") is None:
+            return {**data, "section": ""}
+        return data
 
 
 class _Extracted(BaseModel):

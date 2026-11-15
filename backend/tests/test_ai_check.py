@@ -74,3 +74,23 @@ def test_dropping_text_rejected(fake_ai):
     res = check_recipe(CFG, RAW, [])
     assert not res.changed_lines
     assert "not applied" in res.recipe.notes[-1].text
+
+
+def test_near_miss_line_keys_accepted(fake_ai):
+    # Some local models ignore the schema and say "line" instead of "text", or send strings.
+    fake_ai.review = lambda u: {
+        "ingredients": [
+            {"section": "", "line": "2 cups broth"},
+            "1 tsp salt USE SOY SAUCE INSTEAD",
+        ],
+        "steps": [{"section": None, "line": "Heat it."}],
+        "issues": [],
+        "tags": [],
+    }
+    res = check_recipe(CFG, RAW, [])
+    assert res.changed_lines
+    assert [i.text for i in res.recipe.ingredients] == [
+        "2 cups broth",
+        "1 tsp salt USE SOY SAUCE INSTEAD",
+    ]
+    assert res.recipe.steps[0].text == "Heat it."

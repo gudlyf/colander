@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Fixed: AI check, import and photo transcription no longer fail when a local model labels recipe lines with a slightly different field name (such as "line" instead of "text").
+
 ## 1.1.1 (2026-11-14)
 
 - The keep-screen-on button is labelled, remembered on each device, and turns itself back on when you return to the app. Over plain HTTP it explains that browsers need HTTPS for it.
