@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 from typing import Any
 
@@ -146,15 +147,37 @@ def _call(
     images: list[ImageInput] | None = None,
 ):
     provider = get_provider(cfg)
+    # Not every provider holds the model to the schema (some local servers ignore it), so
+    # spell out the exact shape in the instructions too.
+    system += (
+        "\n\nReply with only a JSON object that matches this JSON schema, using exactly "
+        "these key names and nesting:\n" + json.dumps(schema, separators=(",", ":"))
+    )
+    prompt = user
     last_err: Exception | None = None
     for attempt in range(2):
         try:
-            data = provider.complete_json(system, user, schema, name, images=images)
+            data = provider.complete_json(system, prompt, schema, name, images=images)
             return model_cls.model_validate(data)
         except (ValidationError, AIFormatError) as e:
             last_err = e
             log.warning("AI response invalid (attempt %d): %s", attempt + 1, e)
+            prompt = (
+                f"{user}\n\nYour previous reply did not match the required format "
+                f"({_format_problem(e)}). Reply again with a JSON object that uses exactly "
+                "the keys and nesting in the schema."
+            )
     raise AIError(f"The model's response did not match the expected format: {last_err}")
+
+
+def _format_problem(e: Exception) -> str:
+    if isinstance(e, ValidationError):
+        probs = []
+        for err in e.errors()[:3]:
+            where = ".".join(str(p) for p in err["loc"]) or "top level"
+            probs.append(f"{where}: {err['msg'].lower()}")
+        return "; ".join(probs)
+    return str(e)[:200]
 
 
 def _to_recipe(result: _Extracted, *, hint_title: str | None, source_url: str | None) -> RecipeIn:

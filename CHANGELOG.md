@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Fixed: AI check, import and photo transcription no longer fail when a local model labels recipe lines with a slightly different field name (such as "line" instead of "text").
+- Fixed: AI check, import and photo transcription failed with "The model's response did not match the expected format" when the AI model (often a local one) didn't follow the expected JSON layout. The instructions now spell out the exact layout, a retry tells the model what it got wrong, and slightly different field names (such as "line" instead of "text") are accepted.
 
 ## 1.1.1 (2026-11-14)
 
