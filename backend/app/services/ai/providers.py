@@ -55,6 +55,18 @@ def _b64(data: bytes) -> str:
     return base64.b64encode(data).decode()
 
 
+def with_schema(system: str, schema: dict[str, Any]) -> str:
+    """Spell out the exact JSON layout in the instructions.
+
+    Not every provider holds the model to the schema (Ollama cloud models and some
+    OpenAI-compatible servers ignore it), so the model needs to see the key names too.
+    """
+    return (
+        f"{system}\n\nReply with only a JSON object that matches this JSON schema, using "
+        "exactly these key names and nesting:\n" + json.dumps(schema, separators=(",", ":"))
+    )
+
+
 def _loads(text: str) -> dict:
     text = text.strip()
     if text.startswith("```"):

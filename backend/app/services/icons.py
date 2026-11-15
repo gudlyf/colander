@@ -33,7 +33,7 @@ from sqlalchemy.orm import Session, selectinload
 from ..db import session_scope
 from ..models import ImportJob, Recipe
 from . import images
-from .ai.providers import AIError, get_provider
+from .ai.providers import AIError, get_provider, with_schema
 from .settings_store import (
     AIConfig,
     ImageConfig,
@@ -263,7 +263,9 @@ def _draw_svg(ai_cfg: AIConfig, img_cfg: ImageConfig, description: str) -> bytes
     last: AIError | None = None
     for _ in range(2):  # one retry: drawings occasionally come back malformed
         try:
-            res = provider.complete_json(SVG_SYSTEM, description, SVG_SCHEMA, "icon")
+            res = provider.complete_json(
+                with_schema(SVG_SYSTEM, SVG_SCHEMA), description, SVG_SCHEMA, "icon"
+            )
             return render_svg(sanitize_svg(str(res.get("svg", ""))))
         except AIError as e:
             last = e
@@ -373,7 +375,7 @@ def dish_look(ai_cfg: AIConfig, r: Recipe) -> str | None:
         return None
     try:
         res = get_provider(ai_cfg).complete_json(
-            "You describe how dishes look, for an illustrator. Reply with JSON only.",
+            with_schema("You describe how dishes look, for an illustrator.", LOOK_SCHEMA),
             "Describe what this dish looks like when served, as one simple picture, in at most "
             "20 plain lowercase words: the food itself, its shape and its colours, and how it "
             "sits (on a plate, in a bowl, stacked). Name the food plainly. No title, quotes, "
@@ -485,7 +487,7 @@ def check_icon(ai_cfg: AIConfig, png: bytes, dish: str) -> dict | None:
         buf = io.BytesIO()
         img.save(buf, "PNG")
         res = get_provider(ai_cfg).complete_json(
-            "You check small food illustrations for a recipe app. Reply with JSON only.",
+            with_schema("You check small food illustrations for a recipe app.", QA_SCHEMA),
             f"This icon should show: {dish}.\n"
             "has_text: does the picture contain any visible text: letters, words, numbers, "
             "a title, a caption or a logo? Food shapes and decorations are not text.\n"
@@ -496,6 +498,9 @@ def check_icon(ai_cfg: AIConfig, png: bytes, dish: str) -> dict | None:
             "icon_qa",
             images=[("image/png", buf.getvalue())],
         )
+        if not {"has_text", "shows_dish"} <= set(res):
+            # A reply in some other layout would otherwise read as a pass.
+            raise AIError(f"Unexpected icon check reply: {str(res)[:200]}")
         return {
             "has_text": bool(res.get("has_text")),
             "shows_dish": bool(res.get("shows_dish", True)),

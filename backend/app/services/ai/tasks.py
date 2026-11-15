@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import logging
 from typing import Any
 
@@ -11,7 +10,7 @@ from pydantic import BaseModel, ValidationError, model_validator
 from ...schemas import IngredientIn, NoteIn, RecipeIn, StepIn
 from ..settings_store import AIConfig
 from ..tags import normalize_tag
-from .providers import AIError, AIFormatError, ImageInput, get_provider
+from .providers import AIError, AIFormatError, ImageInput, get_provider, with_schema
 
 log = logging.getLogger(__name__)
 
@@ -147,12 +146,7 @@ def _call(
     images: list[ImageInput] | None = None,
 ):
     provider = get_provider(cfg)
-    # Not every provider holds the model to the schema (some local servers ignore it), so
-    # spell out the exact shape in the instructions too.
-    system += (
-        "\n\nReply with only a JSON object that matches this JSON schema, using exactly "
-        "these key names and nesting:\n" + json.dumps(schema, separators=(",", ":"))
-    )
+    system = with_schema(system, schema)
     prompt = user
     last_err: Exception | None = None
     for attempt in range(2):

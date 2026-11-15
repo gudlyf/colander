@@ -339,3 +339,38 @@ def test_unusable_painted_icon_is_repainted(client, fake_ai, monkeypatch, verdic
     stored = Image.open(io.BytesIO(client.get(f"/api/images/{made['image']}").content))
     assert stored.convert("RGB").getpixel((5, 5)) == colours[kept]
     client.put("/api/settings/images", json={"provider": "none"})
+
+
+@pytest.mark.parametrize(
+    "reply, expected",
+    [
+        ({"has_text": False, "shows_dish": True}, {"has_text": False, "shows_dish": True}),
+        # A reply in another layout must not read as a pass.
+        ({"text": True, "recognisable": False}, None),
+    ],
+)
+def test_icon_check_spells_out_the_layout_and_rejects_others(fake_ai, monkeypatch, reply, expected):
+    from app.services import icons
+    from app.services.settings_store import AIConfig
+
+    seen = []
+
+    def complete_json(system, user, schema, name, images=None):
+        seen.append(system)
+        return reply
+
+    monkeypatch.setattr(fake_ai, "complete_json", complete_json)
+    cfg = AIConfig(
+        provider="ollama",
+        model="x",
+        anthropic_api_key=None,
+        openai_api_key=None,
+        openai_base_url=None,
+        google_api_key=None,
+        ollama_base_url="http://x",
+        auto_tag=True,
+    )
+    buf = io.BytesIO()
+    Image.new("RGB", (64, 64), (0x24, 0x57, 0xB0)).save(buf, "PNG")
+    assert icons.check_icon(cfg, buf.getvalue(), "Soup") == expected
+    assert '"has_text"' in seen[0] and '"shows_dish"' in seen[0]
