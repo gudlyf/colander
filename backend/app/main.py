@@ -81,14 +81,20 @@ def create_app() -> FastAPI:
         static_dir = Path(static_dir)
         app.mount("/assets", StaticFiles(directory=static_dir / "assets"), name="assets")
 
+        # The built frontend never changes at runtime, so index its files once and
+        # serve only those: request paths are looked up, never joined onto disk paths.
+        static_files = {
+            f.relative_to(static_dir).as_posix(): f for f in static_dir.rglob("*") if f.is_file()
+        }
+        index_html = static_dir / "index.html"
+
         @app.get("/{path:path}", include_in_schema=False)
         def spa(path: str):
             if path.startswith("api/"):
                 raise HTTPException(404)
-            candidate = (static_dir / path).resolve()
-            if path and candidate.is_file() and static_dir.resolve() in candidate.parents:
-                return FileResponse(candidate)
-            return FileResponse(static_dir / "index.html", headers={"Cache-Control": "no-cache"})
+            if file := static_files.get(path):
+                return FileResponse(file)
+            return FileResponse(index_html, headers={"Cache-Control": "no-cache"})
 
     return app
 
