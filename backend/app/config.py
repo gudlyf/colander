@@ -1,4 +1,4 @@
-"""Application configuration, read from environment variables (prefix ``COLLANDER_``)."""
+"""Application configuration, read from environment variables (prefix ``COLANDER_``)."""
 
 from __future__ import annotations
 
@@ -9,9 +9,11 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from .legacy import DB_NAME, adopt_legacy_db
+
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="COLLANDER_", env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_prefix="COLANDER_", env_file=".env", extra="ignore")
 
     # Where the SQLite database, images and uploaded import files live.
     data_dir: Path = Path("./data")
@@ -59,7 +61,7 @@ class Settings(BaseSettings):
 
     @property
     def db_path(self) -> Path:
-        return self.data_dir / "collander.db"
+        return self.data_dir / DB_NAME
 
     @property
     def images_dir(self) -> Path:
@@ -95,4 +97,5 @@ class Settings(BaseSettings):
 def get_settings() -> Settings:
     s = Settings()
     s.ensure_dirs()
+    adopt_legacy_db(s.data_dir)
     return s

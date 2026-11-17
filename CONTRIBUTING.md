@@ -1,4 +1,4 @@
-# Contributing to Collander
+# Contributing to Colander
 
 Thanks for helping. Bug reports, fixes and small focused features are all welcome.
 
@@ -14,7 +14,7 @@ Thanks for helping. Bug reports, fixes and small focused features are all welcom
 # Backend
 cd backend
 uv sync
-COLLANDER_DATA_DIR=./data uv run uvicorn app.main:app --reload   # http://localhost:8000
+COLANDER_DATA_DIR=./data uv run uvicorn app.main:app --reload   # http://localhost:8000
 
 # Frontend (separate terminal)
 cd frontend
@@ -74,8 +74,8 @@ Change `backend/app/models.py`, then create a migration:
 
 ```bash
 cd backend
-COLLANDER_DATA_DIR=./data uv run alembic upgrade head
-COLLANDER_DATA_DIR=./data uv run alembic revision --autogenerate -m "describe the change"
+COLANDER_DATA_DIR=./data uv run alembic upgrade head
+COLANDER_DATA_DIR=./data uv run alembic revision --autogenerate -m "describe the change"
 ```
 
 Review the generated file. The FTS5 search table is managed by hand, so autogenerate ignores it. Migrations run automatically when the app starts.
@@ -102,6 +102,6 @@ By contributing, you agree that your contributions are licensed under the MIT Li
 
 1. Update the version in `backend/pyproject.toml`, `backend/app/__init__.py` and `frontend/package.json` (`npm version X.Y.Z --no-git-tag-version`), then run `uv lock` in `backend/`.
 2. Add a section to `CHANGELOG.md`.
-3. Commit, then tag and push: `git tag -a vX.Y.Z -m "Collander X.Y.Z" && git push origin vX.Y.Z`.
+3. Commit, then tag and push: `git tag -a vX.Y.Z -m "Colander X.Y.Z" && git push origin vX.Y.Z`.
 
-Pushing the tag builds the multi-architecture image and publishes it to `ghcr.io/gudlyf/collander` with the `X.Y.Z`, `X.Y`, `X` and `latest` tags. Every push to `main` publishes `edge`.
+Pushing the tag builds the multi-architecture image and publishes it to `ghcr.io/gudlyf/colander` with the `X.Y.Z`, `X.Y`, `X` and `latest` tags. Every push to `main` publishes `edge`.

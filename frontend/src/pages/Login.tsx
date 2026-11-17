@@ -30,7 +30,7 @@ export default function Login({ setup, onDone }: { setup: boolean; onDone: () =>
     <div className="auth">
       <form onSubmit={submit}>
         <Logo />
-        <h1 style={{ fontSize: "2.2rem" }}>Collander</h1>
+        <h1 style={{ fontSize: "2.2rem" }}>Colander</h1>
         {setup ? (
           <p className="muted">Choose a password to protect your recipes. You'll use it to sign in.</p>
         ) : (

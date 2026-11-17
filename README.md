@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/icon.svg" width="96" height="96" alt="Collander icon">
+  <img src="assets/icon.svg" width="96" height="96" alt="Colander icon">
 </p>
 
-<h1 align="center">Collander</h1>
+<h1 align="center">Colander</h1>
 
 <p align="center">A self-hosted recipe box that keeps the original recipe and your changes side by side.</p>
 
@@ -29,30 +29,30 @@
 
 ## Quick start (Docker Compose)
 
-Images for `linux/amd64` and `linux/arm64` are published to `ghcr.io/gudlyf/collander`.
+Images for `linux/amd64` and `linux/arm64` are published to `ghcr.io/gudlyf/colander`.
 
 ```bash
-mkdir collander && cd collander
-curl -fsSLO https://raw.githubusercontent.com/gudlyf/collander/main/compose.yaml
-curl -fsSL -o .env https://raw.githubusercontent.com/gudlyf/collander/main/.env.example   # optional: edit to taste
+mkdir colander && cd colander
+curl -fsSLO https://raw.githubusercontent.com/gudlyf/colander/main/compose.yaml
+curl -fsSL -o .env https://raw.githubusercontent.com/gudlyf/colander/main/.env.example   # optional: edit to taste
 docker compose up -d
 ```
 
 Open <http://localhost:8080>, choose a password, and you're in. To use AI imports, open **Settings → AI model** and pick a provider.
 
-Data is stored in the `collander-data` Docker volume. To keep it in a folder next to `compose.yaml` instead, create the folder and add one line to `.env`:
+Data is stored in the `colander-data` Docker volume. To keep it in a folder next to `compose.yaml` instead, create the folder and add one line to `.env`:
 
 ```bash
 mkdir -p data && sudo chown 1000:1000 data    # the container runs as UID 1000
-echo "COLLANDER_DATA_VOLUME=./data" >> .env
+echo "COLANDER_DATA_VOLUME=./data" >> .env
 ```
 
 Prefer plain `docker run`?
 
 ```bash
-docker run -d --name collander -p 8080:8000 -v collander-data:/data \
+docker run -d --name colander -p 8080:8000 -v colander-data:/data \
   --add-host host.docker.internal:host-gateway \
-  ghcr.io/gudlyf/collander:latest
+  ghcr.io/gudlyf/colander:latest
 ```
 
 ### Image tags
@@ -60,7 +60,7 @@ docker run -d --name collander -p 8080:8000 -v collander-data:/data \
 | Tag | What it is |
 | --- | --- |
 | `latest` | The newest release |
-| `1`, `1.0`, `1.0.0` | A release line or exact release; set `COLLANDER_VERSION` in `.env` to pin one |
+| `1`, `1.0`, `1.0.0` | A release line or exact release; set `COLANDER_VERSION` in `.env` to pin one |
 | `edge` | The current `main` branch |
 
 ### Updating
@@ -72,11 +72,24 @@ docker compose up -d
 
 Database migrations run automatically on start. Take a backup (Settings → Backup) before moving to a new major version.
 
+### Upgrading from Collander
+
+Through 1.x the app was spelled "Collander". If you keep your old `compose.yaml`, nothing changes: `ghcr.io/gudlyf/collander` still gets every release. To switch to the new names, stay in the same folder (Compose names volumes after it) and:
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/gudlyf/colander/main/compose.yaml
+echo "COLANDER_DATA_VOLUME=collander-data" >> .env   # skip if your data is in a folder
+docker compose pull
+docker compose up -d --remove-orphans                 # replaces the old collander container
+```
+
+Old `COLLANDER_*` settings in `.env` keep working; rename them when convenient. The database file is renamed to `colander.db` on first start, and you'll need to sign in once more.
+
 ### Building from source
 
 ```bash
-git clone https://github.com/gudlyf/collander.git
-cd collander
+git clone https://github.com/gudlyf/colander.git
+cd colander
 docker compose up -d --build
 ```
 
@@ -86,26 +99,26 @@ All settings are optional environment variables (put them in `.env`). AI setting
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `COLLANDER_PORT` | `8080` | Host port (compose only) |
-| `COLLANDER_DATA_VOLUME` | `collander-data` | Docker volume name or host folder for data, e.g. `./data` (compose only) |
-| `COLLANDER_PASSWORD` | – | Login password. If unset, you choose one on first visit. |
-| `COLLANDER_SECURE_COOKIES` | `false` | Set `true` when served over HTTPS |
-| `COLLANDER_SESSION_DAYS` | `30` | How long a sign-in lasts |
-| `COLLANDER_QUEUE_WORKERS` | `2` | Imports processed in parallel |
-| `COLLANDER_AI_PROVIDER` | `none` | `none`, `anthropic`, `openai`, `google`, `ollama` |
-| `COLLANDER_AI_MODEL` | provider default | Model name |
-| `COLLANDER_ANTHROPIC_API_KEY` | – | Claude API key |
-| `COLLANDER_OPENAI_API_KEY` | – | OpenAI API key |
-| `COLLANDER_OPENAI_BASE_URL` | – | For OpenAI-compatible servers (LM Studio, vLLM, OpenRouter…) |
-| `COLLANDER_GOOGLE_API_KEY` | – | Gemini API key |
-| `COLLANDER_OLLAMA_BASE_URL` | `http://host.docker.internal:11434` | Ollama address |
-| `COLLANDER_IMAGE_PROVIDER` | `none` | Recipe icons: `none`, `svg`, `a1111`, `openai`, `google` (see [Recipe icons](#recipe-icons)) |
-| `COLLANDER_IMAGE_MODEL` | engine default | Image model, or for `svg` a chat model other than the main one |
-| `COLLANDER_IMAGE_BASE_URL` | – | Stable Diffusion server address for `a1111` |
-| `COLLANDER_IMAGE_STEPS` | `8` | Sampling steps for `a1111` |
-| `COLLANDER_IMAGE_CFG_SCALE` | `1.0` | CFG scale for `a1111` |
-| `COLLANDER_DATA_DIR` | `/data` | Where the database and images live |
-| `COLLANDER_MAX_UPLOAD_BYTES` | 512 MB | Largest accepted upload (ENEX, bundles) |
+| `COLANDER_PORT` | `8080` | Host port (compose only) |
+| `COLANDER_DATA_VOLUME` | `colander-data` | Docker volume name or host folder for data, e.g. `./data` (compose only) |
+| `COLANDER_PASSWORD` | – | Login password. If unset, you choose one on first visit. |
+| `COLANDER_SECURE_COOKIES` | `false` | Set `true` when served over HTTPS |
+| `COLANDER_SESSION_DAYS` | `30` | How long a sign-in lasts |
+| `COLANDER_QUEUE_WORKERS` | `2` | Imports processed in parallel |
+| `COLANDER_AI_PROVIDER` | `none` | `none`, `anthropic`, `openai`, `google`, `ollama` |
+| `COLANDER_AI_MODEL` | provider default | Model name |
+| `COLANDER_ANTHROPIC_API_KEY` | – | Claude API key |
+| `COLANDER_OPENAI_API_KEY` | – | OpenAI API key |
+| `COLANDER_OPENAI_BASE_URL` | – | For OpenAI-compatible servers (LM Studio, vLLM, OpenRouter…) |
+| `COLANDER_GOOGLE_API_KEY` | – | Gemini API key |
+| `COLANDER_OLLAMA_BASE_URL` | `http://host.docker.internal:11434` | Ollama address |
+| `COLANDER_IMAGE_PROVIDER` | `none` | Recipe icons: `none`, `svg`, `a1111`, `openai`, `google` (see [Recipe icons](#recipe-icons)) |
+| `COLANDER_IMAGE_MODEL` | engine default | Image model, or for `svg` a chat model other than the main one |
+| `COLANDER_IMAGE_BASE_URL` | – | Stable Diffusion server address for `a1111` |
+| `COLANDER_IMAGE_STEPS` | `8` | Sampling steps for `a1111` |
+| `COLANDER_IMAGE_CFG_SCALE` | `1.0` | CFG scale for `a1111` |
+| `COLANDER_DATA_DIR` | `/data` | Where the database and images live |
+| `COLANDER_MAX_UPLOAD_BYTES` | 512 MB | Largest accepted upload (ENEX, bundles) |
 
 ### AI providers
 
@@ -120,11 +133,11 @@ Model names change often; set the one you want on the Settings page. Use **Test 
 
 ### Recipe icons
 
-Recipes without a photo can get a simple icon in the style of the Collander logo. Choose how they're made in **Settings → Recipe icons**:
+Recipes without a photo can get a simple icon in the style of the Colander logo. Choose how they're made in **Settings → Recipe icons**:
 
 | Engine | Default model | Notes |
 | --- | --- | --- |
-| Drawn by the AI model (`svg`) | the AI model above | The chat model draws flat shapes, which Collander checks against an allowlist and turns into a PNG. Works with every provider, including Ollama. |
+| Drawn by the AI model (`svg`) | the AI model above | The chat model draws flat shapes, which Colander checks against an allowlist and turns into a PNG. Works with every provider, including Ollama. |
 | Stable Diffusion server (`a1111`) | the server's current model | Any server with the AUTOMATIC1111 API: A1111, Forge, or stable-diffusion.cpp's `sd-server`. Runs locally for free. Defaults (8 steps, CFG 1.0) suit turbo models such as Z-Image Turbo; use about 25 steps and CFG 5–7 for standard SDXL models. **Test connection** checks that the server is awake. |
 | OpenAI (`openai`) | `gpt-image-2` | Uses the OpenAI API key. |
 | Google (`google`) | `gemini-2.5-flash-image` | Uses the Google API key. Gemini image models are called through `generate_content`, `imagen-*` models through `generate_images`. Model names change often; set a current one if the default is retired. |
@@ -139,11 +152,11 @@ New recipes added by hand or through the import queue get an icon automatically 
 
 | Source | How |
 | --- | --- |
-| **Link** | Import → Link. Collander reads the page's schema.org recipe data when it exists, and otherwise has the AI read the page. Some sites block automated requests; copy the text and use **Paste text** instead. When Collander is installed as an app over HTTPS on Android, you can share a link from your browser straight to it. |
+| **Link** | Import → Link. Colander reads the page's schema.org recipe data when it exists, and otherwise has the AI read the page. Some sites block automated requests; copy the text and use **Paste text** instead. When Colander is installed as an app over HTTPS on Android, you can share a link from your browser straight to it. |
 | **Photo** | Import → Photo. Take or choose one or more photos of a single recipe (pages in order). Each upload is queued. Results are saved with a **Needs review** badge, and the original photos are shown on the recipe page until you mark it reviewed. |
 | **Pasted text** | Import → Paste text. AI structures it; without AI, headings like "Ingredients" and "Directions" are used. |
 | **Evernote** | In Evernote, export notes or a notebook as `.enex`. Import → Evernote, upload the file, pick the notes that are recipes (likely recipes are pre-selected), and start. Notes that are just a photo are read from the photo when AI is on. Re-running skips recipes already imported. |
-| **Backup / bundle** | Import → Backup file. Accepts Collander backups and any file in the [bundle format](docs/bundle-format.md), which is handy for one-off migrations such as recipes collected from Google Docs. |
+| **Backup / bundle** | Import → Backup file. Accepts Colander backups and any file in the [bundle format](docs/bundle-format.md), which is handy for one-off migrations such as recipes collected from Google Docs. |
 
 ### AI check
 
@@ -157,10 +170,10 @@ An optional pass that runs your AI model over recipes to **tidy formatting and f
 Large files can also be imported from the command line inside the container:
 
 ```bash
-docker compose cp ./export.enex collander:/data/export.enex
-docker compose exec collander python -m app.cli import-enex /data/export.enex --ai --tag evernote
-docker compose exec collander python -m app.cli import-bundle /data/recipes.json --ai-check
-docker compose exec collander python -m app.cli ai-check            # recipes needing review
+docker compose cp ./export.enex colander:/data/export.enex
+docker compose exec colander python -m app.cli import-enex /data/export.enex --ai --tag evernote
+docker compose exec colander python -m app.cli import-bundle /data/recipes.json --ai-check
+docker compose exec colander python -m app.cli ai-check            # recipes needing review
 ```
 
 ## Search
@@ -180,16 +193,16 @@ Title and tag matches rank above ingredient matches, which rank above matches in
 
 ## Backups
 
-Settings → **Download backup** saves every recipe, note, modification, tag and photo as one JSON file. Restore it with Import → Backup file. You can also back up the Docker volume directly; it contains `collander.db` (SQLite) and the `images/` folder.
+Settings → **Download backup** saves every recipe, note, modification, tag and photo as one JSON file. Restore it with Import → Backup file. You can also back up the Docker volume directly; it contains `colander.db` (SQLite) and the `images/` folder.
 
 ```bash
-docker compose exec collander python -m app.cli export /data/backup.json
+docker compose exec colander python -m app.cli export /data/backup.json
 ```
 
 ## Command line
 
 ```bash
-docker compose exec collander python -m app.cli --help
+docker compose exec colander python -m app.cli --help
 ```
 
 `import-bundle`, `import-enex`, `ai-check`, `export`, `reindex` (rebuild search) and `set-password`.
@@ -202,7 +215,7 @@ Requirements: Python 3.12+ with [uv](https://docs.astral.sh/uv/), Node 20+.
 # Backend (http://localhost:8000)
 cd backend
 uv sync
-COLLANDER_DATA_DIR=./data uv run uvicorn app.main:app --reload
+COLANDER_DATA_DIR=./data uv run uvicorn app.main:app --reload
 
 # Frontend (http://localhost:5173, proxies /api to the backend)
 cd frontend

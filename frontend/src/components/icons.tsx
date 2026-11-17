@@ -61,7 +61,7 @@ export const SunIcon = (p: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-/** The Collander mark, without the app-icon background. */
+/** The Colander mark, without the app-icon background. */
 export const Logo = (p: SVGProps<SVGSVGElement>) => (
   <svg viewBox="30 150 452 280" aria-hidden="true" {...p}>
     <rect x="186" y="384" width="140" height="34" rx="12" fill="var(--ink)" />

@@ -66,11 +66,11 @@ export function useQueue(enabled = true) {
       window.clearTimeout(timer.current);
       tick();
     };
-    window.addEventListener("collander:queue", onPoke);
+    window.addEventListener("colander:queue", onPoke);
     return () => {
       stopped = true;
       window.clearTimeout(timer.current);
-      window.removeEventListener("collander:queue", onPoke);
+      window.removeEventListener("colander:queue", onPoke);
     };
   }, [enabled, refresh]);
 
@@ -78,10 +78,11 @@ export function useQueue(enabled = true) {
 }
 
 export function pokeQueue() {
-  window.dispatchEvent(new Event("collander:queue"));
+  window.dispatchEvent(new Event("colander:queue"));
 }
 
-const WAKE_KEY = "collander:keep-screen-on";
+const WAKE_KEY = "colander:keep-screen-on";
+const LEGACY_WAKE_KEY = "collander:keep-screen-on"; // before the rename from Collander
 
 /**
  * Keep the screen on while a page is open, if the person asked for it on this device.
@@ -93,7 +94,7 @@ export function useWakeLock() {
   const supported = typeof navigator !== "undefined" && "wakeLock" in navigator;
   const [wanted, setWanted] = useState(() => {
     try {
-      return localStorage.getItem(WAKE_KEY) === "on";
+      return (localStorage.getItem(WAKE_KEY) ?? localStorage.getItem(LEGACY_WAKE_KEY)) === "on";
     } catch {
       return false;
     }

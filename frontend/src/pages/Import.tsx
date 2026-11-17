@@ -130,7 +130,7 @@ function LinkTab({ aiOn }: { aiOn: boolean }) {
   return (
     <form onSubmit={submit} className="stack">
       <p className="muted">
-        Paste a link to a recipe page. Collander reads the page's recipe data, or has{" "}
+        Paste a link to a recipe page. Colander reads the page's recipe data, or has{" "}
         {aiOn ? "your AI model" : "a basic parser (turn on AI in Settings for better results)"} pick out the recipe.
       </p>
       <label className="field">
@@ -542,7 +542,7 @@ function BundleTab({ aiOn }: { aiOn: boolean }) {
   return (
     <div className="stack">
       <p className="muted">
-        Restore a Collander backup, or load a bundle prepared elsewhere (for example, recipes gathered from Google
+        Restore a Colander backup, or load a bundle prepared elsewhere (for example, recipes gathered from Google
         Docs). Download a backup from Settings.
       </p>
       <label className="check">
@@ -560,7 +560,7 @@ function BundleTab({ aiOn }: { aiOn: boolean }) {
         </p>
       )}
       <label className="field">
-        Collander bundle (.json)
+        Colander bundle (.json)
         <input
           type="file"
           accept=".json,application/json"

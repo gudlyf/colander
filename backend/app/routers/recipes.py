@@ -156,7 +156,7 @@ def export_all(db: Session = Depends(get_db), images_: bool = Query(True, alias=
     stamp = datetime.now(UTC).strftime("%Y%m%d-%H%M")
     return JSONResponse(
         bundle.model_dump(mode="json"),
-        headers={"Content-Disposition": f'attachment; filename="collander-{stamp}.json"'},
+        headers={"Content-Disposition": f'attachment; filename="colander-{stamp}.json"'},
     )
 
 

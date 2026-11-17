@@ -302,7 +302,7 @@ function IconsForm() {
     <form className="panel stack" onSubmit={save}>
       <h2>Recipe icons</h2>
       <p className="muted small">
-        Recipes without a photo can get a simple icon in the style of the Collander logo. A photo you add later always
+        Recipes without a photo can get a simple icon in the style of the Colander logo. A photo you add later always
         replaces the icon.
       </p>
       <label className="field">
@@ -433,7 +433,7 @@ function PasswordForm({ fromEnv }: { fromEnv: boolean }) {
     return (
       <div className="panel stack">
         <h2>Password</h2>
-        <p className="muted">The password is set with COLLANDER_PASSWORD. Change it there and restart.</p>
+        <p className="muted">The password is set with COLANDER_PASSWORD. Change it there and restart.</p>
       </div>
     );
   return (
@@ -468,7 +468,7 @@ function PasswordForm({ fromEnv }: { fromEnv: boolean }) {
   );
 }
 
-const REPO = "https://github.com/gudlyf/collander";
+const REPO = "https://github.com/gudlyf/colander";
 
 function About() {
   const { data } = useApi<BuildInfo>("/health");

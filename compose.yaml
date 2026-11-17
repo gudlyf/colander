@@ -1,41 +1,42 @@
+# Settings also accept their old COLLANDER_* names from before the rename.
 services:
-  collander:
+  colander:
     # Pulls the published image. To build from this checkout instead: docker compose up -d --build
-    image: ghcr.io/gudlyf/collander:${COLLANDER_VERSION:-latest}
+    image: ghcr.io/gudlyf/colander:${COLANDER_VERSION:-${COLLANDER_VERSION:-latest}}
     build:
       context: .
       args:
-        # Optional: COLLANDER_COMMIT=$(git rev-parse HEAD) docker compose up -d --build
-        COLLANDER_COMMIT: ${COLLANDER_COMMIT:-}
-    container_name: collander
+        # Optional: COLANDER_COMMIT=$(git rev-parse HEAD) docker compose up -d --build
+        COLANDER_COMMIT: ${COLANDER_COMMIT:-${COLLANDER_COMMIT:-}}
+    container_name: colander
     restart: unless-stopped
     ports:
-      - "${COLLANDER_PORT:-8080}:8000"
+      - "${COLANDER_PORT:-${COLLANDER_PORT:-8080}}:8000"
     volumes:
-      # Named volume by default. Set COLLANDER_DATA_VOLUME=./data in .env to use a folder instead.
-      - ${COLLANDER_DATA_VOLUME:-collander-data}:/data
+      # Named volume by default. Set COLANDER_DATA_VOLUME=./data in .env to use a folder instead.
+      - ${COLANDER_DATA_VOLUME:-${COLLANDER_DATA_VOLUME:-colander-data}}:/data
     environment:
       # Everything is optional; see .env.example. Values come from a .env file next to this one.
-      COLLANDER_PASSWORD: ${COLLANDER_PASSWORD:-}
-      COLLANDER_SECURE_COOKIES: ${COLLANDER_SECURE_COOKIES:-false}
-      COLLANDER_QUEUE_WORKERS: ${COLLANDER_QUEUE_WORKERS:-2}
-      COLLANDER_AI_PROVIDER: ${COLLANDER_AI_PROVIDER:-none}
-      COLLANDER_AI_MODEL: ${COLLANDER_AI_MODEL:-}
-      COLLANDER_ANTHROPIC_API_KEY: ${COLLANDER_ANTHROPIC_API_KEY:-}
-      COLLANDER_OPENAI_API_KEY: ${COLLANDER_OPENAI_API_KEY:-}
-      COLLANDER_OPENAI_BASE_URL: ${COLLANDER_OPENAI_BASE_URL:-}
-      COLLANDER_GOOGLE_API_KEY: ${COLLANDER_GOOGLE_API_KEY:-}
-      COLLANDER_OLLAMA_BASE_URL: ${COLLANDER_OLLAMA_BASE_URL:-http://host.docker.internal:11434}
-      COLLANDER_IMAGE_PROVIDER: ${COLLANDER_IMAGE_PROVIDER:-none}
-      COLLANDER_IMAGE_MODEL: ${COLLANDER_IMAGE_MODEL:-}
-      COLLANDER_IMAGE_BASE_URL: ${COLLANDER_IMAGE_BASE_URL:-}
-      COLLANDER_IMAGE_STEPS: ${COLLANDER_IMAGE_STEPS:-8}
-      COLLANDER_IMAGE_CFG_SCALE: ${COLLANDER_IMAGE_CFG_SCALE:-1.0}
+      COLANDER_PASSWORD: ${COLANDER_PASSWORD:-${COLLANDER_PASSWORD:-}}
+      COLANDER_SECURE_COOKIES: ${COLANDER_SECURE_COOKIES:-${COLLANDER_SECURE_COOKIES:-false}}
+      COLANDER_QUEUE_WORKERS: ${COLANDER_QUEUE_WORKERS:-${COLLANDER_QUEUE_WORKERS:-2}}
+      COLANDER_AI_PROVIDER: ${COLANDER_AI_PROVIDER:-${COLLANDER_AI_PROVIDER:-none}}
+      COLANDER_AI_MODEL: ${COLANDER_AI_MODEL:-${COLLANDER_AI_MODEL:-}}
+      COLANDER_ANTHROPIC_API_KEY: ${COLANDER_ANTHROPIC_API_KEY:-${COLLANDER_ANTHROPIC_API_KEY:-}}
+      COLANDER_OPENAI_API_KEY: ${COLANDER_OPENAI_API_KEY:-${COLLANDER_OPENAI_API_KEY:-}}
+      COLANDER_OPENAI_BASE_URL: ${COLANDER_OPENAI_BASE_URL:-${COLLANDER_OPENAI_BASE_URL:-}}
+      COLANDER_GOOGLE_API_KEY: ${COLANDER_GOOGLE_API_KEY:-${COLLANDER_GOOGLE_API_KEY:-}}
+      COLANDER_OLLAMA_BASE_URL: ${COLANDER_OLLAMA_BASE_URL:-${COLLANDER_OLLAMA_BASE_URL:-http://host.docker.internal:11434}}
+      COLANDER_IMAGE_PROVIDER: ${COLANDER_IMAGE_PROVIDER:-${COLLANDER_IMAGE_PROVIDER:-none}}
+      COLANDER_IMAGE_MODEL: ${COLANDER_IMAGE_MODEL:-${COLLANDER_IMAGE_MODEL:-}}
+      COLANDER_IMAGE_BASE_URL: ${COLANDER_IMAGE_BASE_URL:-${COLLANDER_IMAGE_BASE_URL:-}}
+      COLANDER_IMAGE_STEPS: ${COLANDER_IMAGE_STEPS:-${COLLANDER_IMAGE_STEPS:-8}}
+      COLANDER_IMAGE_CFG_SCALE: ${COLANDER_IMAGE_CFG_SCALE:-${COLLANDER_IMAGE_CFG_SCALE:-1.0}}
     # Lets the container reach Ollama running on the host (needed on Linux).
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-  # Optional: run Ollama alongside Collander. Start with `docker compose --profile ollama up -d`,
+  # Optional: run Ollama alongside Colander. Start with `docker compose --profile ollama up -d`,
   # then set the Ollama address in Settings to http://ollama:11434
   ollama:
     image: ollama/ollama:latest
@@ -45,5 +46,7 @@ services:
       - ollama-models:/root/.ollama
 
 volumes:
-  collander-data:
+  colander-data:
   ollama-models:
+  # Data volume from before the rename. Only created if COLANDER_DATA_VOLUME=collander-data.
+  collander-data:

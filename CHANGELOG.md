@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- Renamed from "Collander" to "Colander", the actual spelling of the kitchen strainer. Existing installs keep working:
+  - Settings are now `COLANDER_*`. The old `COLLANDER_*` names still work, in the environment and in `.env`; new names win when both are set, and the log lists any old names in use.
+  - The image is now `ghcr.io/gudlyf/colander`. Releases are also published to `ghcr.io/gudlyf/collander`, so an unchanged `compose.yaml` keeps updating.
+  - `compose.yaml` names its volume `colander-data`. To keep using your existing volume with the new file, set `COLANDER_DATA_VOLUME=collander-data` in `.env`. See [Upgrading from Collander](README.md#upgrading-from-collander).
+  - `collander.db` is renamed to `colander.db` on first start. After that, don't go back to a 1.x image, which would start with an empty database.
+  - Backups saying `collander-bundle` still import, and saved per-device choices (library view, keep screen on) carry over.
+  - Everyone is signed out once, because the session cookie was renamed.
+
 ## 1.1.2 (2026-11-15)
 
 - Fixed: AI check, import and photo transcription failed with "The model's response did not match the expected format" when the AI model didn't follow the expected JSON layout. This mostly affected Ollama cloud models, which ignore the requested format. The instructions now spell out the exact layout, a retry tells the model what it got wrong, and slightly different field names (such as "line" instead of "text") are accepted. Icon descriptions and icon checks get the same layout instructions, and an icon check reply in the wrong layout no longer counts as a pass.

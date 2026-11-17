@@ -27,16 +27,16 @@ COPY backend/alembic.ini ./
 COPY backend/app ./app
 COPY --from=frontend /src/dist ./static
 
-RUN useradd --create-home --uid 1000 collander \
-    && mkdir -p /data && chown collander:collander /data
+RUN useradd --create-home --uid 1000 colander \
+    && mkdir -p /data && chown colander:colander /data
 
 # Set by the release workflow; shown on the Settings page.
-ARG COLLANDER_COMMIT=""
-ENV COLLANDER_COMMIT=${COLLANDER_COMMIT} \
-    COLLANDER_DATA_DIR=/data \
-    COLLANDER_STATIC_DIR=/app/static
+ARG COLANDER_COMMIT=""
+ENV COLANDER_COMMIT=${COLANDER_COMMIT} \
+    COLANDER_DATA_DIR=/data \
+    COLANDER_STATIC_DIR=/app/static
 
-USER collander
+USER colander
 VOLUME ["/data"]
 EXPOSE 8000
 

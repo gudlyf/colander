@@ -2,8 +2,10 @@ name: Docker image
 
 # Builds the image on every pull request (without publishing it).
 # Publishes to GitHub Container Registry:
-#   push to main   -> ghcr.io/<owner>/collander:edge
+#   push to main   -> ghcr.io/<owner>/colander:edge
 #   tag vX.Y.Z     -> :X.Y.Z, :X.Y, :X and :latest
+# The same tags also go to the pre-rename name, ghcr.io/<owner>/collander, so installs
+# still pulling it keep getting updates.
 
 on:
   push:
@@ -41,7 +43,9 @@ jobs:
       - id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: |
+            ghcr.io/${{ github.repository_owner }}/colander
+            ghcr.io/${{ github.repository_owner }}/collander
           tags: |
             type=edge,branch=main
             type=semver,pattern={{version}}
@@ -49,7 +53,7 @@ jobs:
             type=semver,pattern={{major}}
             type=ref,event=pr
           labels: |
-            org.opencontainers.image.title=Collander
+            org.opencontainers.image.title=Colander
             org.opencontainers.image.description=A self-hosted recipe box that keeps the original recipe and your changes side by side.
             org.opencontainers.image.licenses=MIT
 
@@ -62,6 +66,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
           build-args: |
-            COLLANDER_COMMIT=${{ github.event.pull_request.head.sha || github.sha }}
+            COLANDER_COMMIT=${{ github.event.pull_request.head.sha || github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

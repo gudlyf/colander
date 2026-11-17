@@ -10,7 +10,7 @@ import httpx
 
 USER_AGENT = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 "
-    "(KHTML, like Gecko) Chrome/130.0 Safari/537.36 Collander/1.0"
+    "(KHTML, like Gecko) Chrome/130.0 Safari/537.36 Colander/1.0"
 )
 MAX_PAGE_BYTES = 15 * 1024 * 1024
 

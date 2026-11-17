@@ -1,5 +1,5 @@
 [project]
-name = "collander"
+name = "colander"
 version = "1.1.2"
 description = "Self-hosted recipe manager with AI import"
 requires-python = ">=3.12"

@@ -66,7 +66,7 @@ def test_crud_overrides_notes_and_search(client):
 
     # Export -> re-import bundle (skip duplicates)
     bundle = client.get("/api/recipes/export").json()
-    assert bundle["format"] == "collander-bundle" and bundle["recipes"]
+    assert bundle["format"] == "colander-bundle" and bundle["recipes"]
     client.delete(f"/api/recipes/{rid}")
     assert client.get(f"/api/recipes/{rid}").status_code == 404
 
@@ -221,7 +221,7 @@ def test_health_reports_version_and_commit(client, monkeypatch):
     from app import __version__, commit
 
     commit.cache_clear()
-    monkeypatch.setenv("COLLANDER_COMMIT", "0123456789abcdef0123456789abcdef01234567")
+    monkeypatch.setenv("COLANDER_COMMIT", "0123456789abcdef0123456789abcdef01234567")
     try:
         r = client.get("/api/health")
         assert r.status_code == 200

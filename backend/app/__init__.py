@@ -3,16 +3,21 @@ import subprocess
 from functools import cache
 from pathlib import Path
 
+from .legacy import adopt_legacy_env
+
 __version__ = "1.1.2"
+
+# Before anything reads settings, so old COLLANDER_* names keep working everywhere.
+adopt_legacy_env()
 
 
 @cache
 def commit() -> str | None:
     """The git commit this build came from.
 
-    Release images bake it in as COLLANDER_COMMIT; a source checkout asks git.
+    Release images bake it in as COLANDER_COMMIT; a source checkout asks git.
     """
-    sha = os.environ.get("COLLANDER_COMMIT", "").strip()
+    sha = os.environ.get("COLANDER_COMMIT", "").strip()
     if sha:
         return sha
     try:
