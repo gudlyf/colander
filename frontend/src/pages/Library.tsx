@@ -25,11 +25,13 @@ export function Thumb({ title, image }: { title: string; image: string | null })
 }
 
 type View = "cards" | "list";
-const VIEW_KEY = "collander:library-view";
+const VIEW_KEY = "colander:library-view";
+const LEGACY_VIEW_KEY = "collander:library-view"; // before the rename from Collander
 
 function loadView(): View {
   try {
-    return localStorage.getItem(VIEW_KEY) === "list" ? "list" : "cards";
+    const saved = localStorage.getItem(VIEW_KEY) ?? localStorage.getItem(LEGACY_VIEW_KEY);
+    return saved === "list" ? "list" : "cards";
   } catch {
     return "cards";
   }

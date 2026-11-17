@@ -4,7 +4,7 @@ Docker port forwarding may reach the container over IPv6 (``localhost`` often
 resolves to ``::1`` first), so a plain IPv4 bind can leave the UI unreachable at
 http://localhost. We open one dual-stack socket ourselves because asyncio marks
 ``::`` sockets as IPv6-only. Falls back to IPv4 where IPv6 is disabled.
-Override with COLLANDER_HOST / COLLANDER_LISTEN_PORT.
+Override with COLANDER_HOST / COLANDER_LISTEN_PORT.
 """
 
 from __future__ import annotations
@@ -31,8 +31,8 @@ def _dual_stack_socket(port: int) -> socket.socket | None:
 
 
 def main() -> None:
-    port = int(os.environ.get("COLLANDER_LISTEN_PORT", "8000"))
-    host = os.environ.get("COLLANDER_HOST")
+    port = int(os.environ.get("COLANDER_LISTEN_PORT", "8000"))
+    host = os.environ.get("COLANDER_HOST")
     sock = None if host else _dual_stack_socket(port)
     config = uvicorn.Config(
         "app.main:app",

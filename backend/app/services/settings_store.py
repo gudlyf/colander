@@ -12,7 +12,7 @@ from ..models import AppSetting
 PROVIDERS = ("none", "anthropic", "openai", "google", "ollama")
 
 # Sensible defaults per provider. Model names change often: override them on the
-# Settings page or with COLLANDER_AI_MODEL rather than editing code.
+# Settings page or with COLANDER_AI_MODEL rather than editing code.
 DEFAULT_MODELS = {
     "anthropic": "claude-opus-5-5",
     "openai": "gpt-5-mini",

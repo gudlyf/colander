@@ -10,7 +10,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
-BUNDLE_FORMAT = "collander-bundle"
+BUNDLE_FORMAT = "colander-bundle"
 BUNDLE_VERSION = 1
 
 

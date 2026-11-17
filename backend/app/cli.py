@@ -1,10 +1,10 @@
 """Command-line helpers, e.g. inside the container:
 
-docker compose exec collander python -m app.cli import-bundle /data/recipes.json
-docker compose exec collander python -m app.cli import-enex /data/export.enex --ai --tag evernote
-docker compose exec collander python -m app.cli export /data/backup.json
-docker compose exec collander python -m app.cli reindex
-docker compose exec collander python -m app.cli set-password
+docker compose exec colander python -m app.cli import-bundle /data/recipes.json
+docker compose exec colander python -m app.cli import-enex /data/export.enex --ai --tag evernote
+docker compose exec colander python -m app.cli export /data/backup.json
+docker compose exec colander python -m app.cli reindex
+docker compose exec colander python -m app.cli set-password
 """
 
 from __future__ import annotations
@@ -46,10 +46,10 @@ def _report(job_id: int) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(prog="collander")
+    p = argparse.ArgumentParser(prog="colander")
     sub = p.add_subparsers(dest="cmd", required=True)
 
-    b = sub.add_parser("import-bundle", help="Import a Collander JSON bundle")
+    b = sub.add_parser("import-bundle", help="Import a Colander JSON bundle")
     b.add_argument("path", type=Path)
     b.add_argument("--allow-duplicates", action="store_true")
     b.add_argument("--ai-check", action="store_true", help="Tidy/sanity-check each recipe with AI")

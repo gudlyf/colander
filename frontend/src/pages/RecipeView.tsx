@@ -390,7 +390,7 @@ export default function RecipeView() {
           </div>
           {awakeHint && (
             <p className="small muted no-print">
-              Browsers only allow keeping the screen on when Collander is opened over HTTPS.
+              Browsers only allow keeping the screen on when Colander is opened over HTTPS.
             </p>
           )}
         </div>

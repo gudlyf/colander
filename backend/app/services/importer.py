@@ -1,4 +1,4 @@
-"""Bulk imports (Evernote ENEX, Collander bundles) run as background jobs."""
+"""Bulk imports (Evernote ENEX, Colander bundles) run as background jobs."""
 
 from __future__ import annotations
 

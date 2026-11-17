@@ -100,7 +100,7 @@ async def upload_bundle(
     ai_check: bool = Form(False),
     db: Session = Depends(get_db),
 ):
-    """Import a Collander JSON bundle (backup, Google Drive import, etc.)."""
+    """Import a Colander JSON bundle (backup, Google Drive import, etc.)."""
     if ai_check and not load_ai_config(db).enabled:
         raise HTTPException(409, "AI is not configured.")
     path = await _store_upload(file, ".json")
@@ -108,7 +108,7 @@ async def upload_bundle(
         bundle = importer.load_bundle(path)
     except Exception as e:
         path.unlink(missing_ok=True)
-        raise HTTPException(422, f"Not a valid Collander bundle: {e}") from e
+        raise HTTPException(422, f"Not a valid Colander bundle: {e}") from e
     job = ImportJob(
         kind="bundle",
         status="running",

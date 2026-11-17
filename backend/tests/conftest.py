@@ -5,10 +5,10 @@ from pathlib import Path
 import pytest
 
 # Point the app at a throwaway data dir *before* app modules are imported.
-_TMP = tempfile.mkdtemp(prefix="collander-test-")
-os.environ["COLLANDER_DATA_DIR"] = _TMP
-os.environ.pop("COLLANDER_PASSWORD", None)
-os.environ["COLLANDER_AI_PROVIDER"] = "none"
+_TMP = tempfile.mkdtemp(prefix="colander-test-")
+os.environ["COLANDER_DATA_DIR"] = _TMP
+os.environ.pop("COLANDER_PASSWORD", None)
+os.environ["COLANDER_AI_PROVIDER"] = "none"
 
 FIXTURES = Path(__file__).parent / "fixtures"
 

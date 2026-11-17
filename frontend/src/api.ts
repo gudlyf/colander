@@ -1,4 +1,4 @@
-// Typed client for the Collander REST API.
+// Typed client for the Colander REST API.
 
 export interface BuildInfo {
   status: string;
@@ -174,7 +174,7 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
   }
   const res = await fetch(`/api${path}`, init);
   if (res.status === 401 && !path.startsWith("/auth")) {
-    window.dispatchEvent(new Event("collander:unauthorized"));
+    window.dispatchEvent(new Event("colander:unauthorized"));
   }
   if (!res.ok) {
     let msg = res.statusText;

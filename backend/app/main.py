@@ -1,4 +1,4 @@
-"""Collander FastAPI application."""
+"""Colander FastAPI application."""
 
 from __future__ import annotations
 
@@ -14,6 +14,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from . import __version__, commit
 from .auth import require_auth
 from .config import get_settings
+from .legacy import log_adopted_env
 from .migrate import upgrade_db
 from .routers import auth as auth_router
 from .routers import imports, recipes, settings, tags
@@ -33,6 +34,7 @@ except ImportError:  # pragma: no cover
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
+    log_adopted_env()
     upgrade_db()
     mark_interrupted_jobs()
     imports.cleanup_uploads()
@@ -42,11 +44,11 @@ async def lifespan(_app: FastAPI):
 
 def create_app() -> FastAPI:
     s = get_settings()
-    app = FastAPI(title="Collander", version=__version__, lifespan=lifespan)
+    app = FastAPI(title="Colander", version=__version__, lifespan=lifespan)
     app.add_middleware(
         SessionMiddleware,
         secret_key=s.get_secret_key(),
-        session_cookie="collander_session",
+        session_cookie="colander_session",
         max_age=s.session_days * 86400,
         same_site="lax",
         https_only=s.secure_cookies,

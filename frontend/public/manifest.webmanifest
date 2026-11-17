@@ -1,6 +1,6 @@
 {
-  "name": "Collander",
-  "short_name": "Collander",
+  "name": "Colander",
+  "short_name": "Colander",
   "description": "Your self-hosted recipe collection",
   "start_url": "/",
   "display": "standalone",

@@ -52,7 +52,7 @@ def logout(request: Request):
 def change_password(body: PasswordChange, request: Request, db: Session = Depends(get_db)):
     if auth.password_from_env():
         raise HTTPException(
-            status.HTTP_409_CONFLICT, "The password is set by COLLANDER_PASSWORD; change it there."
+            status.HTTP_409_CONFLICT, "The password is set by COLANDER_PASSWORD; change it there."
         )
     auth.throttle_check()
     if not auth.check_password(db, body.current_password):

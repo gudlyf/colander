@@ -25,8 +25,8 @@ export default function App() {
   useEffect(() => {
     check();
     const onUnauth = () => check();
-    window.addEventListener("collander:unauthorized", onUnauth);
-    return () => window.removeEventListener("collander:unauthorized", onUnauth);
+    window.addEventListener("colander:unauthorized", onUnauth);
+    return () => window.removeEventListener("colander:unauthorized", onUnauth);
   }, [check]);
 
   if (!auth) return null;
@@ -42,9 +42,9 @@ function Shell({ auth }: { auth: AuthStatus }) {
     <div className="shell">
       <header className="topbar">
         <div className="topbar-inner">
-          <Link to="/" className="brand" aria-label="Collander home">
+          <Link to="/" className="brand" aria-label="Colander home">
             <Logo />
-            <span>Collander</span>
+            <span>Colander</span>
           </Link>
           {pending > 0 && (
             <Link to="/import" className="queue-pill" title={`${pending} import(s) in progress`}>

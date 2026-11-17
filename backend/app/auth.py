@@ -1,6 +1,6 @@
 """Single-password authentication.
 
-The password comes from ``COLLANDER_PASSWORD`` if set, otherwise it is chosen on
+The password comes from ``COLANDER_PASSWORD`` if set, otherwise it is chosen on
 the first-run setup screen and stored as a salted scrypt hash. Sessions are signed
 cookies; changing the password invalidates existing sessions.
 """

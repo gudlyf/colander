@@ -1,10 +1,12 @@
-# Collander bundle format
+# Colander bundle format
 
-A bundle is a JSON file holding one or more recipes. Collander backups use it, and it is the easiest way to migrate recipes from somewhere else: write a script (or ask an AI assistant) that turns your recipes into this shape, then load it with **Import → Backup file** or `python -m app.cli import-bundle`.
+A bundle is a JSON file holding one or more recipes. Colander backups use it, and it is the easiest way to migrate recipes from somewhere else: write a script (or ask an AI assistant) that turns your recipes into this shape, then load it with **Import → Backup file** or `python -m app.cli import-bundle`.
+
+Backups made before the rename from Collander say `collander-bundle`; they load the same way.
 
 ```json
 {
-  "format": "collander-bundle",
+  "format": "colander-bundle",
   "version": 1,
   "recipes": [
     {
