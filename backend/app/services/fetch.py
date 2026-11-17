@@ -13,6 +13,7 @@ USER_AGENT = (
     "(KHTML, like Gecko) Chrome/130.0 Safari/537.36 Colander/1.0"
 )
 MAX_PAGE_BYTES = 15 * 1024 * 1024
+MAX_REDIRECTS = 10
 
 
 class FetchError(RuntimeError):
@@ -38,17 +39,31 @@ def assert_public_url(url: str) -> None:
             raise FetchError("That address is not allowed.")
 
 
+def safe_get(url: str, *, headers: dict[str, str], timeout: float = 30) -> httpx.Response:
+    """GET ``url``, following redirects ourselves so every hop passes ``assert_public_url``.
+
+    httpx's ``follow_redirects=True`` would happily chase a public URL into a
+    blocked address (e.g. the cloud metadata endpoint), so we don't use it.
+    """
+    with httpx.Client(follow_redirects=False, timeout=timeout, headers=headers) as client:
+        for _ in range(MAX_REDIRECTS + 1):
+            assert_public_url(url)
+            r = client.get(url)
+            if not r.is_redirect:
+                return r
+            url = str(r.url.join(r.headers["location"]))
+    raise FetchError("Too many redirects.")
+
+
 def fetch_page(url: str) -> tuple[str, str]:
     """Fetch an HTML page. Returns (final_url, html)."""
-    assert_public_url(url)
     headers = {
         "User-Agent": USER_AGENT,
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "Accept-Language": "en-US,en;q=0.9",
     }
     try:
-        with httpx.Client(follow_redirects=True, timeout=30, headers=headers) as client:
-            r = client.get(url)
+        r = safe_get(url, headers=headers)
     except httpx.HTTPError as e:
         raise FetchError(f"Could not fetch the page: {e}") from e
     if r.status_code in (401, 403, 429):

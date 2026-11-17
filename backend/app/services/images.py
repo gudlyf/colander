@@ -8,11 +8,10 @@ import logging
 import re
 import uuid
 
-import httpx
 from PIL import Image, ImageOps
 
 from ..config import get_settings
-from .fetch import USER_AGENT, assert_public_url
+from .fetch import USER_AGENT, safe_get
 
 log = logging.getLogger(__name__)
 
@@ -53,14 +52,10 @@ def save_image_bytes(data: bytes, *, png: bool = False, max_dim: int = MAX_DIM) 
 
 def save_image_from_url(url: str) -> str | None:
     try:
-        assert_public_url(url)
-        with httpx.Client(
-            follow_redirects=True, timeout=30, headers={"User-Agent": USER_AGENT}
-        ) as client:
-            r = client.get(url)
-            if r.status_code != 200:
-                return None
-            return save_image_bytes(r.content)
+        r = safe_get(url, headers={"User-Agent": USER_AGENT})
+        if r.status_code != 200:
+            return None
+        return save_image_bytes(r.content)
     except Exception as e:  # noqa: BLE001
         log.info("Image download failed for %s: %s", url, e)
         return None
