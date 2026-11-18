@@ -4,6 +4,7 @@ import { api, emptyRecipe, imageUrl, toInput, type IngredientIn, type Recipe, ty
 import { DownIcon, TrashIcon, UpIcon } from "../components/icons";
 import TagInput from "../components/TagInput";
 import { useTags } from "../hooks";
+import { totalTime } from "../time";
 
 type Line = IngredientIn;
 
@@ -309,7 +310,11 @@ export default function RecipeEdit() {
         </label>
         <label className="field">
           Total time
-          <input type="text" {...text("total_time")} />
+          <input
+            type="text"
+            {...text("total_time")}
+            placeholder={totalTime({ ...form, total_time: null }) ?? ""}
+          />
         </label>
       </div>
       <div className="editor-grid">

@@ -69,6 +69,8 @@ export interface RecipeSummary {
   favorite: boolean;
   rating: number | null;
   needs_review: boolean;
+  prep_time: string | null;
+  cook_time: string | null;
   total_time: string | null;
   tags: string[];
   has_modifications: boolean;

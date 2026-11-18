@@ -15,6 +15,7 @@ import { LineList } from "../components/Lines";
 import { useApi, useWakeLock } from "../hooks";
 import { factorLabel, PRESET_FACTORS, scaleServings } from "../scale";
 import { recipeSource } from "../source";
+import { totalTime } from "../time";
 
 function Scaler({ factor, setFactor }: { factor: number; setFactor: (f: number) => void }) {
   const custom = !PRESET_FACTORS.includes(factor);
@@ -294,7 +295,7 @@ export default function RecipeView() {
     ["Serves", servings],
     ["Prep", recipe.prep_time],
     ["Cook", recipe.cook_time],
-    ["Total", recipe.total_time],
+    ["Total", totalTime(recipe)],
   ].filter(([, v]) => v);
 
   return (

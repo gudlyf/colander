@@ -10,6 +10,7 @@
   - Backups saying `collander-bundle` still import, and saved per-device choices (library view, keep screen on) carry over.
   - Everyone is signed out once, because the session cookie was renamed.
 - Fixed: a recipe's source showed only when it had a link. A source name on its own, such as a cookbook, now shows too. Links without `https://` open correctly instead of breaking the page.
+- A recipe with prep and cook times but no total time shows their sum as the total, on the recipe page and in the library. Ranges such as "10-12 min" add up as ranges. In the editor, the sum appears as a hint in the empty Total time field; it isn't saved.
 
 ## 1.1.2 (2026-11-15)
 

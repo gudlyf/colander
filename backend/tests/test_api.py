@@ -232,3 +232,12 @@ def test_health_reports_version_and_commit(client, monkeypatch):
         }
     finally:
         commit.cache_clear()
+
+
+def test_summary_has_times_for_a_computed_total(client):
+    body = dict(RECIPE, title="Timed Soup", prep_time="10 min", cook_time="25 min", total_time=None)
+    rid = client.post("/api/recipes", json=body).json()["id"]
+    items = client.get("/api/recipes", params={"q": "Timed"}).json()["items"]
+    got = next(i for i in items if i["id"] == rid)
+    assert (got["prep_time"], got["cook_time"], got["total_time"]) == ("10 min", "25 min", None)
+    client.delete(f"/api/recipes/{rid}")

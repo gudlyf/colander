@@ -93,6 +93,8 @@ class RecipeSummary(BaseModel):
     favorite: bool
     rating: int | None
     needs_review: bool
+    prep_time: str | None = None
+    cook_time: str | None = None
     total_time: str | None
     tags: list[str]
     has_modifications: bool
