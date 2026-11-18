@@ -9,6 +9,7 @@
   - `collander.db` is renamed to `colander.db` on first start. After that, don't go back to a 1.x image, which would start with an empty database.
   - Backups saying `collander-bundle` still import, and saved per-device choices (library view, keep screen on) carry over.
   - Everyone is signed out once, because the session cookie was renamed.
+- Fixed: a recipe's source showed only when it had a link. A source name on its own, such as a cookbook, now shows too. Links without `https://` open correctly instead of breaking the page.
 
 ## 1.1.2 (2026-11-15)
 
