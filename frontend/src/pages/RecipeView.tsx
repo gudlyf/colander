@@ -14,6 +14,8 @@ import { HeartIcon, PencilIcon, PrinterIcon, SunIcon, TrashIcon } from "../compo
 import { LineList } from "../components/Lines";
 import { useApi, useWakeLock } from "../hooks";
 import { factorLabel, PRESET_FACTORS, scaleServings } from "../scale";
+import { recipeSource } from "../source";
+import { totalTime } from "../time";
 
 function Scaler({ factor, setFactor }: { factor: number; setFactor: (f: number) => void }) {
   const custom = !PRESET_FACTORS.includes(factor);
@@ -287,12 +289,13 @@ export default function RecipeView() {
   };
 
   const hero = imageUrl(recipe.image);
+  const source = recipeSource(recipe.source_name, recipe.source_url);
   const servings = scaleServings(recipe.servings, factor);
   const facts = [
     ["Serves", servings],
     ["Prep", recipe.prep_time],
     ["Cook", recipe.cook_time],
-    ["Total", recipe.total_time],
+    ["Total", totalTime(recipe)],
   ].filter(([, v]) => v);
 
   return (
@@ -314,12 +317,16 @@ export default function RecipeView() {
               ))}
             </dl>
           )}
-          {recipe.source_url && (
+          {source && (
             <div className="small">
               From{" "}
-              <a href={recipe.source_url} target="_blank" rel="noreferrer noopener">
-                {recipe.source_name || new URL(recipe.source_url).hostname}
-              </a>
+              {source.href ? (
+                <a href={source.href} target="_blank" rel="noreferrer noopener">
+                  {source.label}
+                </a>
+              ) : (
+                source.label
+              )}
             </div>
           )}
           {recipe.tags.length > 0 && (

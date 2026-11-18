@@ -24,6 +24,8 @@ def to_summary(r: Recipe) -> RecipeSummary:
         favorite=r.favorite,
         rating=r.rating,
         needs_review=r.needs_review,
+        prep_time=r.prep_time,
+        cook_time=r.cook_time,
         total_time=r.total_time,
         tags=sorted(t.name for t in r.tags),
         has_modifications=has_modifications(r),

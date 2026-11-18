@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { api, imageUrl, type RecipeList, type RecipeSummary } from "../api";
 import { GridIcon, HeartIcon, ListIcon, SearchIcon } from "../components/icons";
 import { useTags } from "../hooks";
+import { totalTime } from "../time";
 
 const PAGE = 48;
 
@@ -82,11 +83,16 @@ function Row({ r }: { r: RecipeSummary }) {
           {r.needs_review && <span className="badge review">Needs review</span>}
           {r.has_modifications && <span className="badge mod">Modified</span>}
           {r.rating ? <span className="list-rating" aria-label={`${r.rating} stars`}>{"★".repeat(r.rating)}</span> : null}
-          {r.total_time && <span className="small muted">{r.total_time}</span>}
+          <TotalTime r={r} />
         </div>
       </Link>
     </li>
   );
+}
+
+function TotalTime({ r }: { r: RecipeSummary }) {
+  const total = totalTime(r);
+  return total ? <span className="small muted">{total}</span> : null;
 }
 
 function Card({ r }: { r: RecipeSummary }) {
@@ -105,7 +111,7 @@ function Card({ r }: { r: RecipeSummary }) {
       <div className="meta">
         {r.needs_review && <span className="badge review">Needs review</span>}
         {r.has_modifications && <span className="badge mod">Modified</span>}
-        {r.total_time && <span className="small muted">{r.total_time}</span>}
+        <TotalTime r={r} />
       </div>
     </Link>
   );
