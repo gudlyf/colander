@@ -26,6 +26,12 @@
   --r-lg: 18px;
   --r-pill: 999px;
   --gutter: clamp(16px, 4vw, 40px);
+  /* Room for the status bar, Dynamic Island, notch and home indicator when the app fills
+     the screen (installed on iPhone, with viewport-fit=cover). Zero everywhere else. */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --gutter-left: max(var(--gutter), env(safe-area-inset-left, 0px));
+  --gutter-right: max(var(--gutter), env(safe-area-inset-right, 0px));
   --maxw: 1180px;
   color-scheme: light;
 }
@@ -149,11 +155,12 @@ h3 {
   z-index: 20;
   background: var(--paper);
   border-bottom: 1px solid var(--line);
+  padding-top: var(--safe-top);
 }
 .topbar-inner {
   max-width: var(--maxw);
   margin: 0 auto;
-  padding: 10px var(--gutter);
+  padding: 10px var(--gutter-right) 10px var(--gutter-left);
   display: flex;
   align-items: center;
   gap: 14px;
@@ -198,7 +205,7 @@ main {
   width: 100%;
   max-width: var(--maxw);
   margin: 0 auto;
-  padding: 24px var(--gutter) 80px;
+  padding: 24px var(--gutter-right) calc(80px + var(--safe-bottom)) var(--gutter-left);
 }
 
 @media (max-width: 720px) {
@@ -584,7 +591,7 @@ label.field .hint {
 }
 .cook .ingredients {
   position: sticky;
-  top: 76px;
+  top: calc(76px + var(--safe-top));
 }
 @media (max-width: 820px) {
   .cook {
@@ -822,7 +829,8 @@ label.field .hint {
   display: grid;
   place-items: center;
   z-index: 100;
-  padding: 16px;
+  padding: max(16px, var(--safe-top)) max(16px, env(safe-area-inset-right, 0px))
+    max(16px, var(--safe-bottom)) max(16px, env(safe-area-inset-left, 0px));
 }
 .lightbox img {
   max-height: 92vh;
@@ -933,7 +941,7 @@ label.field .hint {
   bottom: 0;
   background: var(--paper);
   border-top: 1px solid var(--line);
-  padding: 12px 0;
+  padding: 12px 0 calc(12px + var(--safe-bottom));
   display: flex;
   gap: 10px;
   justify-content: flex-end;
@@ -1134,7 +1142,8 @@ pre.log {
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 16px;
+  padding: calc(16px + var(--safe-top)) var(--gutter-right) calc(16px + var(--safe-bottom))
+    var(--gutter-left);
 }
 .auth form {
   width: min(380px, 100%);
